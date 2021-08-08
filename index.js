@@ -2,7 +2,7 @@
  * @Author: fengshaomu
  * @LastEditor: fengshaomu
  * @Date: 2021-08-04 10:45:32
- * @LastEditTime: 2021-08-07 12:23:06
+ * @LastEditTime: 2021-08-08 16:56:30
  * @FilePath: /test/index.js
  * @Descripttion: None
  * @EditReason: None
@@ -42,25 +42,20 @@
 // console.log(_.compact([0, 1, false, 2, '', 3]));
 
 // // 连接所有值到一个数组
-// array = [1];
-// console.log(_.concat(array, 2, [3], [[4]]));
-// console.log(array);
+// console.log(_.concat([1], 2, [3], [[4]]));
 
 // // 二数组 - 一数组
 // console.log(_.difference([3, 2, 1], [4, 2]));
 
 // // 传一个函数对两边就行处理
-// function lar (n) {
-//     return n.indexOf('a');
-// }
-// console.log(_.differenceBy(['a', 'a', 'ba', 'bab', 'bba', 'bbba'], ['a', 'ca'], lar));
+// console.log(_.differenceBy(['a', 'a', 'ba', 'bab', 'bba', 'bbba'], ['a', 'ca'], n => n.indexOf('a')));
 
 // // 也可以传一个对象的属性名
-// console.log(_.differenceBy([{ a: 1, b: 2, c: 0 }], [{ a: 1, b: 2, c: 3 }], 'c'));
+// console.log(_.differenceBy([{ a: 1, b: 2, c: 0 }, { a: 1, b: 0, c: 3 }], [{ a: 1, b: 2, c: 3 }], 'c'));
 
-// // 传一个比较器
+// // 传一个定制器
 // console.log(_.differenceWith([{ a: 1, b: 2, c: 4 }, { a: 1, b: 2, c: -1 }],
-//     [{ a: 1, b: 2, c: 3 }], (oa, ob) => oa.c > 0 && ob.a > 0));
+// [{ a: 1, b: 2, c: 3 }], (oa, ob) => oa.c > 0 && ob.a > 0));
 
 // // 去除前面n个元素, 默认是1
 // console.log(_.drop([1, 2, 3, 4, 5, 6], 4));
@@ -68,14 +63,14 @@
 // console.log(_.dropRight([1, 2, 3, 4, 5, 6], 4));
 
 // // 第一个返回假,以及他之后的元素
-// let users = [
-//     { 'user': 'barney', 'active': false },
-//     { 'user': 'fred', 'active': true },
-//     { 'user': 'pebbles1', 'active': false },
-//     { 'user': 'pebbles2', 'active': false },
-//     { 'user': 'pebbles3', 'active': true },
-//     { 'user': 'pebbles4', 'active': false }
-// ];
+let users = [
+    { 'user': 'pebbles', 'active': false },
+    { 'user': 'barney', 'active': false },
+    { 'user': 'pebbles2', 'active': false },
+    { 'user': 'pebbles', 'active': true },
+    { 'user': 'pebbles4', 'active': false },
+    { 'user': 'fred', 'active': true },
+];
 // console.log(_.dropWhile(users, function (o) { return !o.active; }));
 // // 字面意思
 // console.log(_.dropRightWhile(users, function (o) { return !o.active; }));
@@ -88,7 +83,7 @@
 
 // // _.findIndex(array, [predicate=_.identity], [fromIndex=0])
 // // 从fromIndex开始找array中通过第二个参数判断为真的元素,找不到返回-1
-// console.log(_.findIndex(users, function (o) { return o.user == 'barney'; }));
+// console.log(_.findIndex(users, o => _.startsWith(o.user, 'pebbles'), 3));
 // // 字面意思
 // console.log(_.findLastIndex(users, function (o) { return o.user == 'barney'; }));
 
@@ -188,10 +183,10 @@
 // console.log(_.takeRightWhile([1, 2, 3, 3, 4], a => a > 1));
 
 // // 组合去重
-// console.log(_.union([2], [1, 2]));
+// console.log(_.union([2], [1, 2], [1, 2, 3, 4]));
 // // 迭代器版本
 // console.log(_.unionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x'));
-// // 比较器版本
+// // 定制器版本
 // console.log(_.unionWith([{ 'x': 1, 'y': 2 }, { 'x': 2, 'y': 1 }], [{ 'x': 1, 'y': 1 }, { 'x': 1, 'y': 2 }], _.isEqual));
 
 // // 去重
@@ -392,7 +387,7 @@
 // _.rest((name, age, characters) => console.log(`${name} is ${age} andd ${_.join(characters, ' and ')}`), 2)('tom', 18, 'a', 'b', 'c');
 
 
-// // 参数作为数组传入
+// // 参数传入时作为数组传入
 // _.spread((a, b, c) => console.log(`${a} is ${b} and ${c}`), 1)('a', ['b', 'c']);
 
 // // _.throttle(func, [wait=0], [options=])
@@ -414,6 +409,9 @@
 // // 深拷贝
 // console.log(_.cloneDeep(users)[0] === users[0]);
 // // 定制拷贝
+// // _.cloneWith(value, [customizer])
+// // 定制深拷贝
+// // _.cloneDeepWith(value, [customizer])
 
 // // 检查对象的值
 // console.log(_.conformsTo({ a: '1', b: '2', c: '3' }, { a: a => a, c: c => c > '2' }));
@@ -479,7 +477,7 @@
 // console.log(_.lte(1, 1));
 
 // // 将value转化为数组
-// console.log(_.toArray({ a: 'a', b: 'b' }));
+// console.log(_.toArray({ a: 'a', b: 'c' }));
 
 // // 转换为有限数字
 // console.log(_.toFinite(Infinity));
@@ -551,51 +549,51 @@
 
 
 
-// 返回被限制的值
-// .clamp(number, [lower], upper)
-console.log(_.clamp(-30, -5, 5));
-console.log(_.clamp(3, -5, 5));
-console.log(_.clamp(30, -5, 5));
+// // 返回被限制的值
+// // .clamp(number, [lower], upper)
+// console.log(_.clamp(-30, -5, 5));
+// console.log(_.clamp(3, -5, 5));
+// console.log(_.clamp(30, -5, 5));
 
-// 是否在范围内
-// _.inRange(number, [start=0], end)
-console.log(_.inRange(3, -5, 5));
+// // 是否在范围内
+// // _.inRange(number, [start=0], end)
+// console.log(_.inRange(3, -5, 5));
 
-// 随机数
-// _.random([lower=0], [upper=1], [floating])
-// floating = true 返回浮点数
-// 包含上下界
-console.log(_.random(0, 10));
+// // 随机数
+// // _.random([lower=0], [upper=1], [floating])
+// // floating = true 返回浮点数
+// // 包含上下界
+// console.log(_.random(0, 10));
 
 
-function Foo () {
-    this.a = 1;
-}
+// function Foo () {
+//     this.a = 1;
+// }
 
-function Bar () {
-    this.c = 3;
-}
+// function Bar () {
+//     this.c = 3;
+// }
 
-Foo.prototype.b = 2;
-Bar.prototype.d = 4;
-// 把对象组合到另一个对象上
-console.log(_.assign({}, new Foo, new Bar));
-// 会遍历并继承来源对象的属性
-console.log(_.assignIn({}, new Foo, new Bar));
-// 定制器版本
-// _.assignInWith(object, sources, [customizer])
-// _.assignWith(object, sources, [customizer])
+// Foo.prototype.b = 2;
+// Bar.prototype.d = 4;
+// // 把对象组合到另一个对象上
+// console.log(_.assign({}, new Foo, new Bar));
+// // 会遍历并继承来源对象的属性
+// console.log(_.assignIn({}, new Foo, new Bar));
+// // 定制器版本
+// // _.assignInWith(object, sources, [customizer])
+// // _.assignWith(object, sources, [customizer])
 
-// 创建一个数组，值来自 object 的paths路径相应的值
-console.log(_.at({ 'a': [{ 'b': { 'c': 3 } }, 4] }, ['a[0].b.c', 'a[1]']));
+// // 创建一个数组，值来自 object 的paths路径相应的值
+// console.log(_.at({ 'a': [{ 'b': { 'c': 3 } }, 4] }, ['a[0].b.c', 'a[1]']));
 
-// 创建一个继承 prototype 的对象。
-// _.create(prototype, [properties])
+// // 创建一个继承 prototype 的对象。
+// // _.create(prototype, [properties])
 
-// 分配第二个及以后的对象的属性(第一个对象该属性为undefined)到第一个上,设置了值后续就不再设置
-console.log(_.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } }));
-// 深度版本
-console.log(_.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } }));
+// // 分配第二个及以后的对象的属性(第一个对象该属性为undefined)到第一个上,设置了值后续就不再设置
+// console.log(_.defaults({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } }));
+// // 深度版本
+// console.log(_.defaultsDeep({ 'a': { 'b': 2 } }, { 'a': { 'b': 1, 'c': 3 } }));
 
 const uuss = {
     tom: { name: 'tom', active: false },
@@ -603,327 +601,323 @@ const uuss = {
     marry: { name: 'marry', active: true }
 }
 
-// 对象上的查找
-console.log(_.findKey(uuss, o => o.active));
-// 后面查找
-// _.findLastKey(object, [predicate = _.identity])
-
-// 对象上遍历, 无法保证遍历顺序
-_.forIn(uuss, (a, b) => console.log(a, b));
-// 右侧遍历
-// _.forInRight(object, [iteratee = _.identity])
-
-// 不遍历继承属性的版本
-// _.forOwn(object, [iteratee=_.identity])
-// 右侧
-// _.forOwnRight(object, [iteratee=_.identity])
-
-// 获得函数自身的function名称的数组
-console.log(_.functions({ a: 1, b () { }, c () { } }));
-// 包括继承的function名
-// _.functionsIn(object)
+// // 根据值查找键
+// console.log(_.findKey(uuss, o => o.active));
+// // 后面查找
+// // _.findLastKey(object, [predicate = _.identity])
+
+// // 对象上遍历, 无法保证遍历顺序
+// _.forIn(uuss, (a, b) => console.log(a, b));
+// // 右侧遍历
+// // _.forInRight(object, [iteratee = _.identity])
+// // 不遍历继承属性的版本
+// // _.forOwn(object, [iteratee=_.identity])
+// // 右侧
+// // _.forOwnRight(object, [iteratee=_.identity])
+
+// // 获得函数自身的function名称的数组
+// console.log(_.functions({ a: 1, b () { }, c () { } }));
+// // 包括继承的function名
+// // _.functionsIn(object)
+
+// // 按路径获得属性值
+// console.log(_.get({ 'a': [{ 'b': { 'c': 3 } }] }, 'a[0].b.c'));
+
+// // 检测对象书否有属性
+// console.log(_.has({ 'a': [{ 'b': { 'c': 3 } }] }, 'a[0].b.c'));
+// // 继承版本
+// // _.hasIn(object, path)
+
+// // 键值互换
+// console.log(_.invert({ a: 1, b: 2, c: 1 }));
+// // 收集相同的值形成数组
+// console.log(_.invertBy({ a: 1, b: 2, c: 1 }, o => 'group' + o));
 
-// 按路径获得属性名
-console.log(_.get({ 'a': [{ 'b': { 'c': 3 } }] }, 'a[0].b.c'));
+// // 调用对象上的方法
+// console.log(_.invoke({ 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] }, 'a[0].b.c.slice', 1, 3));
 
-// 检测对象书否有属性
-console.log(_.has({ 'a': [{ 'b': { 'c': 3 } }] }, 'a[0].b.c'));
-// 继承版本
-// _.hasIn(object, path)
+// // 属性名数组
+// console.log(_.keys(uuss));
+// // 继承版本
+// // _.keysIn(object)
 
-// 键值互换
-console.log(_.invert({ a: 1, b: 2, c: 1 }));
-// 收集相同的值形成数组
-console.log(_.invertBy({ a: 1, b: 2, c: 1 }, o => 'group' + o));
+// // 处理键
+// console.log(_.mapKeys({ 'a': 1, 'b': 2 }, (value, key) => key + value));
+// // 处理值
+// console.log(_.mapValues({ 'a': 1, 'b': 2 }, (value, key) => key + value));
 
-// 调用对象上的方法
-console.log(_.invoke({ 'a': [{ 'b': { 'c': [1, 2, 3, 4] } }] }, 'a[0].b.c.slice', 1, 3));
+// // 类似assign, 但会改变对象
+// // _.merge(object, [sources])
+// // 定制器版本
+// // _.mergeWith(object, sources, customizer)
 
-// 属性名数组
-console.log(_.keys(uuss));
-// 继承版本
-// _.keysIn(object)
+// // 创建一个选定属性的对象
+// console.log(_.pick({ a: 1, b: 2, c: 3 }, ['a', 'c', 'd']));
+// // 判断器
+// // _.pickBy(object, [predicate = _.identity])
 
-// 处理键
-console.log(_.mapKeys({ 'a': 1, 'b': 2 }, (value, key) => key + value));
-// 处理值
-console.log(_.mapValues({ 'a': 1, 'b': 2 }, (value, key) => key + value));
+// // 类似_.get, 但匹配到函数则返回执行的结果
+// // _.result(object, path, [defaultValue])
 
-// 类似assign, 但会改变对象
-// _.merge(object, [sources])
-// 定制器版本
-// _.mergeWith(object, sources, customizer)
+// // 设置对应属性的值
+// console.log(_.set({ 'a': [{ 'b': { 'c': 3 } }] }, 'a[0].b.c', 4));
+// // 定制器版本
+// // _.setWith(object, path, value, [customizer])
 
-// 创建一个选定属性的对象
-console.log(_.pick({ a: 1, b: 2, c: 3 }, ['a', 'c', 'd']));
-// 判断器
-// _.pickBy(object, [predicate = _.identity])
+// // 键值对数组
+// console.log(_.toPairs(uuss));
+// // 继承版本
+// // _.toPairsIn(object)
 
-// 类似_.get, 但匹配到函数则返回执行的结果
-// _.result(object, path, [defaultValue])
+// // _.transform(object, [iteratee=_.identity], [accumulator])
+// // reduce的替代方法
 
-// 设置对应属性的值
-console.log(_.set({ 'a': [{ 'b': { 'c': 3 } }] }, 'a[0].b.c', 4));
-// 定制器版本
-// _.setWith(object, path, value, [customizer])
+// // 移除属性
+// _.unset(uuss, 'tom')
+// console.log(uuss);
 
-// 键值对数组
-console.log(_.toPairs(uuss));
-// 继承版本
-// _.toPairsIn(object)
+// // 将方法传入updater来更新指定位置的值
+// // _.update(object, path, updater)
+// // 定制器版本
+// // _.updateWith(object, path, updater, [customizer])
 
-// _.transform(object, [iteratee=_.identity], [accumulator])
-// reduce的替代方法
+// // 返回值的数组
+// console.log(_.values(uuss));
+// // 继承版本
+// // _.valuesIn(object)
 
-// 移除属性
-_.unset(uuss, 'tom')
-console.log(uuss);
+// // 链式调用
+// console.log(_.chain(uuss).toArray().sortBy('name').map(o => o.name + ' is ' + o.active).head().value());
 
-// 将方法传入updater来更新指定位置的值
-// _.update(object, path, updater)
-// 定制器banben
-// _.updateWith(object, path, updater, [customizer])
+// // 进入 方法链序列以便修改中间结果
+// console.log(_([1, 2, 3]).tap(array => array.pop()).reverse().value());
 
-// 返回值的数组
-console.log(_.values(uuss));
-// 继承版本
-// _.valuesIn(object)
+// // _.thru(value, interceptor)
+// // 类似_.tap， 除了它返回 interceptor 的返回结果。
 
-// 链式调用
-console.log(_.chain(uuss).toArray().sortBy('name').map(o => o.name + ' is ' + o.active).head().value());
+// // _.prototype[Symbol.iterator]
+// // 启用包装对象为 iterable。
 
-// 进入 方法链序列以便修改中间结果
-console.log(_([1, 2, 3]).tap(array => array.pop()).reverse().value());
+// // _.prototype.at([paths])
+// // 这个方法是_.at 的包装版本 。
 
-// _.thru(value, interceptor)
-// 类似_.tap， 除了它返回 interceptor 的返回结果。
+// // _.prototype.chain()
+// // 创建一个lodash包装实例，启用显式链模式。
 
-// _.prototype[Symbol.iterator]
-// 启用包装对象为 iterable。
+// // _.prototype.commit()
+// // 执行链式队列并返回结果。
 
-// _.prototype.at([paths])
-// 这个方法是_.at 的包装版本 。
+// // _.prototype.next()
+// // 获得包装对象的下一个值
 
-// _.prototype.chain()
-// 创建一个lodash包装实例，启用显式链模式。
+// // _.prototype.plant(value)
+// // 创建一个链式队列的拷贝，传入的 value 作为链式队列的值。
 
-// _.prototype.commit()
-// 执行链式队列并返回结果。
+// // .prototype.reverse()
+// // 这个方法是_.reverse 的包装版本 。
 
-// _.prototype.next()
-// 获得包装对象的下一个值
+// // _.prototype.value()
+// // 执行链式队列并提取解链后的值。
 
-// _.prototype.plant(value)
-// 创建一个链式队列的拷贝，传入的 value 作为链式队列的值。
+// // 驼峰
+// console.log(_.camelCase('foo Bar'));
 
-// .prototype.reverse()
-// 这个方法是_.reverse 的包装版本 。
+// // 首字母大写
+// console.log(_.capitalize('foo Bar'));
 
-// _.prototype.value()
-// 执行链式队列并提取解链后的值。
+// // _.deburr([string = ''])
+// // 转换字符串string中拉丁语 - 1补充字母 和拉丁语扩展字母 - A 为基本的拉丁字母，并且去除组合变音标记。
 
-// 驼峰
-console.log(_.camelCase('Foo Bar'));
+// // 以指定的字符串结尾
+// console.log(_.endsWith('abc', 'b', 2));
 
-// 首字母大写
-console.log(_.capitalize('FRED'));
+// // 转义string中的 "&", "<", ">", '"', "'", 和 "`" 字符为HTML实体字符
+// console.log(_.escape('fred, barney, & pebbles'));
 
-// _.deburr([string = ''])
-// 转换字符串string中拉丁语 - 1补充字母 和拉丁语扩展字母 - A 为基本的拉丁字母，并且去除组合变音标记。
+// // 转义 RegExp 字符串中特殊的字符 "^", "$", "", ".", "*", "+", "?", "(", ")", "[", "]", ", ", 和 "|" in 
+// console.log(_.escapeRegExp('[lodash](https://lodash.com/)'));
 
-// 以指定的字符串结尾
-console.log(_.endsWith('abc', 'b', 2));
+// // kebab case
+// console.log(_.kebabCase('foo Bar'));
 
-// 转义string中的 "&", "<", ">", '"', "'", 和 "`" 字符为HTML实体字符
-console.log(_.escape('fred, barney, & pebbles'));
+// // 转换字符串string以空格分开单词，并转换为小写。
+// console.log(_.lowerCase('fooBar1'));
 
-// 转义 RegExp 字符串中特殊的字符 "^", "$", "", ".", "*", "+", "?", "(", ")", "[", "]", ", ", 和 "|" in 
-console.log(_.escapeRegExp('[lodash](https://lodash.com/)'));
+// // 首字母小写
+// console.log(_.lowerFirst('foo Bar'));
 
-// kebab case
-console.log(_.kebabCase('Foo Bar'));
+// // 填充到指定长度
+// console.log(_.pad('abc', 8, '_-'));
+// // 左右填充
+// // _.padEnd([string=''], [length=0], [chars=' '])
+// // _.padStart([string=''], [length=0], [chars=' '])
 
-// 转换字符串string以空格分开单词，并转换为小写。
-console.log(_.lowerCase('FOoBar'));
+// // 转换为整数, 第二个参数为进制
+// console.log(_.parseInt('101', 2));
 
-// 首字母小写
-console.log(_.lowerFirst('FRED'));
+// // 重复给定的字符串n次
+// console.log(_.repeat('*', 3));
 
-// 填充到指定长度
-console.log(_.pad('abc', 8, '_-'));
-// 左右填充
-// _.padEnd([string=''], [length=0], [chars=' '])
-// _.padStart([string=''], [length=0], [chars=' '])
+// // 替换
+// console.log(_.replace('Hi Fred', 'Fred', 'Barney'));
 
-// 转换为整数, 第二个参数为进制
-console.log(_.parseInt('101', 2));
+// // snake case
+// console.log(_.snakeCase('foo Bar'));
 
-// 重复给定的字符串n次
-console.log(_.repeat('*', 3));
+// // 拆分
+// console.log(_.split('a-b-c-d', '-', 2));
 
-// 替换
-console.log(_.replace('Hi Fred', 'Fred', 'Barney'));
+// // start case
+// console.log(_.startCase('foo Bar'));
 
-// snake case
-console.log(_.snakeCase('Foo Bar'));
+// // 以***开头
+// // _.startsWith([string=''], [target], [position=0])
 
-// 拆分
-console.log(_.split('a-b-c-d', '-', 2));
+// // _.template([string = ''], [options =])
+// // 创建一个预编译模板方法，可以插入数据到模板中 "interpolate" 分隔符相应的位置。
 
-// start case
-console.log(_.startCase('--foo-bar--'));
+// // 全部小写
+// console.log(_.toLower('foo Bar'));
 
-// 以***开头
-// _.startsWith([string=''], [target], [position=0])
+// // 全部大写
+// console.log(_.toUpper('foo Bar'));
 
-// _.template([string = ''], [options =])
-// 创建一个预编译模板方法，可以插入数据到模板中 "interpolate" 分隔符相应的位置。
+// // 移除两边指定字符串
+// console.log(_.trim('@-  abc1@  -', '-@ '));
+// // 开头结尾移除
+// // _.trimEnd([string=''], [chars=whitespace])
+// // _.trimStart([string=''], [chars=whitespace])
 
-// 全部小写
-console.log(_.toLower('--Foo-Bar--'));
+// // 截断字符串
+// // _.truncate([string = ''], [options =])
+// // [string = ''](string): 要截断的字符串。
+// // [options =](Object): 选项对象。
+// // [options.length = 30](number): 允许的最大长度。
+// // [options.omission = '...'](string): 超出后的代替字符。
+// // [options.separator](RegExp | string): 截断点。
 
-// 全部daxie
-console.log(_.toUpper('--foo-bar--'));
+// console.log(_.truncate('hi-diddly-ho there, neighborino', {
+//     'length': 24,
+//     'separator': ' ',
+//     'omission': '@@@'
+// }));
 
-// 移除两边指定字符串
-console.log(_.trim('@-  abc1@  -', '-@ '));
-// 开头结尾移除
-// _.trimEnd([string=''], [chars=whitespace])
-// _.trimStart([string=''], [chars=whitespace])
+// // _.unescape([string=''])
+// // _.escape的反向版。 这个方法转换string字符串中的 HTML 实体 &amp;, &lt;, &gt;, &quot;, &#39;, 和 &#96; 为对应的字符。
 
-// 截断字符串
-// _.truncate([string = ''], [options =])
-// [string = ''](string): 要截断的字符串。
-// [options =](Object): 选项对象。
-// [options.length = 30](number): 允许的最大长度。
-// [options.omission = '...'](string): 超出后的代替字符。
-// [options.separator](RegExp | string): 截断点。
+// // 空格分割的大写字符
+// console.log(_.upperCase('--foo-bar'));
 
-console.log(_.truncate('hi-diddly-ho there, neighborino', {
-    'length': 24,
-    'separator': ' ',
-    'omission': '@@@'
-}));
+// // 首字母大写
+// console.log(_.upperFirst('foo Bar'));
 
-// _.unescape([string=''])
-// _.escape的反向版。 这个方法转换string字符串中的 HTML 实体 &amp;, &lt;, &gt;, &quot;, &#39;, 和 &#96; 为对应的字符。
+// // 拆分为词数组
+// console.log(_.words('fred, barney, & pebbles', /[^, ]+/g));
 
-// 空格分割的大写字符
-console.log(_.upperCase('--foo-bar'));
+// // _.attempt(func, [args])
+// // 尝试调用func，返回结果 或者 捕捉错误对象。任何附加的参数都会在调用时传给func。
 
-// 首字母大写
-console.log(_.upperFirst('frED'));
+// // _.bindAll(object, methodNames)
+// // 绑定一个对象的方法到对象本身，覆盖现有的方法。
 
-// 拆分为词数组
-console.log(_.words('fred, barney, & pebbles', /[^, ]+/g));
+// // _.cond(pairs)
+// // 创建了一个函数，这个函数会迭代pairs，并调用最先返回真值对应的函数。该断言函数对绑定 this 及传入创建函数的参数。
 
-// _.attempt(func, [args])
-// 尝试调用func，返回结果 或者 捕捉错误对象。任何附加的参数都会在调用时传给func。
+// // _.conforms(source)
+// // 创建一个函数。 这个函数会 调用 source 的属性名对应的 predicate 与传入对象相对应属性名的值进行断言处理。 如果都符合返回 true ，否则返回 false 。
 
-// _.bindAll(object, methodNames)
-// 绑定一个对象的方法到对象本身，覆盖现有的方法。
+// // _.constant(value)
+// // 创建一个返回 value 的函数。
 
-// _.cond(pairs)
-// 创建了一个函数，这个函数会迭代pairs，并调用最先返回真值对应的函数。该断言函数对绑定 this 及传入创建函数的参数。
+// // 默认值
+// // _.defaultTo(value, defaultValue)
+// // 检查value，以确定一个默认值是否应被返回。如果value为NaN, null, 或者 undefined，那么返回defaultValue默认值。
 
-// _.conforms(source)
-// 创建一个函数。 这个函数会 调用 source 的属性名对应的 predicate 与传入对象相对应属性名的值进行断言处理。 如果都符合返回 true ，否则返回 false 。
+// // 连续调用
+// console.log(_.flow([_.add, n => n * n])(1, 2));
+// // _.flowRight([funcs])
+// // 右向左
 
-// _.constant(value)
-// 创建一个返回 value 的函数。
+// // _.identity(value)
+// // 这个方法返回首个提供的参数。
 
-// 默认值
-// _.defaultTo(value, defaultValue)
-// 检查value，以确定一个默认值是否应被返回。如果value为NaN, null, 或者 undefined，那么返回defaultValue默认值。
+// // _.iteratee([func = _.identity])
+// // 创建一个函数，通过创建函数的参数调用 func 函数。 如果 func 是一个属性名，传入包含这个属性名的对象，回调返回对应属性名的值。 如果 func 是一个对象，传入的元素有相同的对象属性，回调返回 true 。 其他情况返回 false 。
 
-// 连续调用
-console.log(_.flow([_.add, n => n * n])(1, 2));
-// _.flowRight([funcs])
-// 右向左
+// // 深度比较
+// console.log(_.matches({ 'a': 4, 'c': 6 })({ 'a': 4, 'c': 6 }));
 
-// _.identity(value)
-// 这个方法返回首个提供的参数。
+// // _.matchesProperty(path, srcValue)
+// // 创建一个深比较的方法来比较给定对象的 path 的值是否是 srcValue 。 如果是返回 true ，否则返回 false 。
 
-// _.iteratee([func = _.identity])
-// 创建一个函数，通过创建函数的参数调用 func 函数。 如果 func 是一个属性名，传入包含这个属性名的对象，回调返回对应属性名的值。 如果 func 是一个对象，传入的元素有相同的对象属性，回调返回 true 。 其他情况返回 false 。
+// // _.method(path, [args])
+// // 创建一个调用给定对象 path 上的函数。 任何附加的参数都会传入这个调用函数中。
 
-// 深度比较
-console.log(_.matches({ 'a': 4, 'c': 6 })({ 'a': 4, 'c': 6 }));
+// // _.methodOf(object, [args])
+// // _.method的反向版。 这个创建一个函数调用给定 object 的 path 上的方法， 任何附加的参数都会传入这个调用函数中。
 
-// _.matchesProperty(path, srcValue)
-// 创建一个深比较的方法来比较给定对象的 path 的值是否是 srcValue 。 如果是返回 true ，否则返回 false 。
+// // _.mixin([object = lodash], source, [options =])
+// // 添加来源对象自身的所有可枚举函数属性到目标对象。 如果 object 是个函数，那么函数方法将被添加到原型链上。
 
-// _.method(path, [args])
-// 创建一个调用给定对象 path 上的函数。 任何附加的参数都会传入这个调用函数中。
+// // _.noConflict()
+// // 释放 _ 变量为原来的值，并返回一个 lodash 的引用。
 
-// _.methodOf(object, [args])
-// _.method的反向版。 这个创建一个函数调用给定 object 的 path 上的方法， 任何附加的参数都会传入这个调用函数中。
+// // _.noop()
+// // 这个方法返回 undefined
 
-// _.mixin([object = lodash], source, [options =])
-// 添加来源对象自身的所有可枚举函数属性到目标对象。 如果 object 是个函数，那么函数方法将被添加到原型链上。
+// // _.nthArg([n = 0])
+// // 创建一个函数，这个函数返回第 n 个参数。如果 n为负数，则返回从结尾开始的第n个参数。
 
-// _.noConflict()
-// 释放 _ 变量为原来的值，并返回一个 lodash 的引用。
+// // _.over([iteratees = [_.identity]])
+// // 创建一个函数，传入提供的参数的函数并调用 iteratees 返回结果。
+// console.log(_.over([_.max, _.min])([1, 2, 3, 4]));
 
-// _.noop()
-// 这个方法返回 undefined
+// // _.overEvery([predicates = [_.identity]])
+// // 建一个函数，传入提供的参数的函数并调用 predicates 判断是否 全部 都为真值。
+// console.log(_.overEvery([Boolean, isFinite])('1'));
 
-// _.nthArg([n = 0])
-// 创建一个函数，这个函数返回第 n 个参数。如果 n为负数，则返回从结尾开始的第n个参数。
+// // _.overSome([predicates = [_.identity]])
+// // 创建一个函数，传入提供的参数的函数并调用 predicates 判断是否 存在 有真值。
 
-// _.over([iteratees = [_.identity]])
-// 创建一个函数，传入提供的参数的函数并调用 iteratees 返回结果。
-console.log(_.over([_.max, _.min])([1, 2, 3, 4]));
+// // _.property(path)
+// // 创建一个返回给定对象的 path 的值的函数
 
-// _.overEvery([predicates = [_.identity]])
-// 建一个函数，传入提供的参数的函数并调用 predicates 判断是否 全部 都为真值。
-console.log(_.overEvery([Boolean, isFinite])('1'));
+// // _.propertyOf(object)
+// // _.property的反相版本。 这个方法创建的函数返回给定 path 在object上的值。
 
-// _.overSome([predicates = [_.identity]])
-// 创建一个函数，传入提供的参数的函数并调用 predicates 判断是否 存在 有真值。
+// // _.range([start = 0], end, [step = 1])
+// // 创建一个包含从 start 到 end，但不包含 end 本身范围数字的数组。
 
-// _.property(path)
-// 创建一个返回给定对象的 path 的值的函数
+// // _.rangeRight([start=0], end, [step=1])
+// // 降序
 
-// _.propertyOf(object)
-// _.property的反相版本。 这个方法创建的函数返回给定 path 在object上的值。
+// // _.runInContext([context=root])
+// // 创建一个给定context上下文对象的原始的 lodash 函数。
 
-// _.range([start = 0], end, [step = 1])
-// 创建一个包含从 start 到 end，但不包含 end 本身范围数字的数组。
+// // _.stubFalse()
+// // 这个方法返回 false.
 
-// _.rangeRight([start=0], end, [step=1])
-// 降序
+// // _.stubObject()
+// // 这个方法返回一个空对象.
 
-// _.runInContext([context=root])
-// 创建一个给定context上下文对象的原始的 lodash 函数。
+// // _.stubString()
+// // 这个方法返回一个空字符串。
 
-// _.runInContext([context = root])
-// 创建一个给定context上下文对象的原始的 lodash 函数。
+// // _.stubTrue()
+// // 这个方法返回 true。
 
-// _.stubFalse()
-// 这个方法返回 false.
+// // _.times(n, [iteratee = _.identity])
+// // 调用 iteratee n 次，每次调用返回的结果存入到数组中。 iteratee 调用入1个参数： (index)。
+// console.log(_.times(3, String));
 
-// _.stubObject()
-// 这个方法返回一个空对象.
+// // _.toPath(value)
+// // 转化 value 为属性路径的数组 。
+// console.log(_.toPath('a[0].b.c'));
 
-// _.stubString()
-// 这个方法返回一个空字符串。
-
-// _.stubTrue()
-// 这个方法返回 true。
-
-// _.times(n, [iteratee = _.identity])
-// 调用 iteratee n 次，每次调用返回的结果存入到数组中。 iteratee 调用入1个参数： (index)。
-console.log(_.times(3, String));
-
-// _.toPath(value)
-// 转化 value 为属性路径的数组 。
-console.log(_.toPath('a[0].b.c'));
-
-// _.uniqueId([prefix = ''])
-// 生成唯一ID。 如果提供了 prefix ，会被添加到ID前缀上。
-console.log(_.uniqueId('contact_'));
-console.log(_.uniqueId('contact_'));
+// // _.uniqueId([prefix = ''])
+// // 生成唯一ID。 如果提供了 prefix ，会被添加到ID前缀上。
+// console.log(_.uniqueId('contact_'));
+// console.log(_.uniqueId('contact_'));
 
 
 
